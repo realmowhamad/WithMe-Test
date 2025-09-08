@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import './Login.css';
+import Navbar from '../components/Navigation';
 
 // Validation schema
 const schema = yup.object({
@@ -39,7 +40,8 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container">
+    <div className="login-container" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+        <Navbar />      
       <div className="login-form-container">
         <h2 className="login-title">
           Login

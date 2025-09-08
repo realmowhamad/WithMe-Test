@@ -6,10 +6,14 @@ import {
 } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Navbar from "./components/Navigation";
 
 // Placeholder components - you can replace these with your actual components
 function Home() {
-  return <div>Welcome to Home Page</div>;
+  return <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+    <Navbar />
+    <h1>Welcome to Home Page</h1>
+    </div>;
 }
 
 function App() {

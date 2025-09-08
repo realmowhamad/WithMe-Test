@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import './Register.css';
-import Navbar from '../components/navigation';
+import Navbar from '../components/Navigation';
 
 // Validation schema
 const schema = yup.object({
