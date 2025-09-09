@@ -3,7 +3,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import './Register.css';
 import Navbar from '../components/Navigation';
-
+import useAuth, { type RegisterDataTypes, type RegisterResponseTypes } from '../hooks/useAuth';
+import { useEffect, useState } from 'react';
 // Validation schema
 const schema = yup.object({
   username: yup
@@ -23,11 +24,11 @@ const schema = yup.object({
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
       'Password must contain at least one uppercase letter, one lowercase letter, and one number'
     ),
-  confirmPassword: yup
+  password_confirm: yup 
     .string()
     .required('Please confirm your password')
     .oneOf([yup.ref('password')], 'Passwords must match'),
-  dateOfBirth: yup
+    date_of_birth: yup
     .date()
     .required('Date of birth is required')
     .max(new Date(), 'Date of birth cannot be in the future')
@@ -45,12 +46,18 @@ const schema = yup.object({
   gender: yup
     .string()
     .required('Please select your gender')
-    .oneOf(['male', 'female', 'other', 'prefer-not-to-say'], 'Please select a valid gender option'),
+    .oneOf(['M', 'F', 'O'], 'Please select a valid gender option'),
 });
 
 type FormData = yup.InferType<typeof schema>;
 
 const Register = () => {
+  const { mutate: mutateRegister } = useAuth().useRegister();
+
+  const [showMessage, setShowMessage] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>('');
+  const [messageType, setMessageType] = useState<'success' | 'error'>('success');
+
   const {
     register,
     handleSubmit,
@@ -59,15 +66,39 @@ const Register = () => {
     resolver: yupResolver(schema),
   });
 
+  useEffect(() => {
+    if (showMessage) {
+      setTimeout(() => {
+        setShowMessage(false);
+      }, 3000);
+    }
+  }, [showMessage]);
+
   const onSubmit = async (data: FormData) => {
     try {
-      // Simulate API call
-      console.log('Registration data:', data);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      alert('Registration successful! Welcome to our platform.');
+      // Format date_of_birth to YYYY-MM-DD string format
+      const formattedData = {
+        ...data,
+        date_of_birth: new Date(data.date_of_birth).toISOString().split('T')[0]
+      };
+      
+      console.log(formattedData);
+      mutateRegister(formattedData as unknown as RegisterDataTypes,{
+        onSuccess:(data:RegisterResponseTypes) => {
+          setMessageType('success');
+          setMessage(data.message);
+          setShowMessage(true);
+        },
+        onError: (error:any) => {
+          setMessageType('error');
+          setMessage(error.response?.data?.message || 'Registration failed. Please try again.');
+          setShowMessage(true);
+        }
+      });
     } catch (error) {
-      console.error('Registration error:', error);
-      alert('Registration failed. Please try again.');
+      setMessageType('error');
+      setMessage('Registration failed. Please try again.');
+      setShowMessage(true);
     }
   };
 
@@ -78,7 +109,11 @@ const Register = () => {
         <h2 className="register-title">
           Create Account
         </h2>
-        
+        {showMessage && (
+          <div className={`message-container ${messageType}`}>
+            <p className="message-text">{message}</p>
+          </div>
+        )}        
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="form-row">
             <div className="form-group">
@@ -142,15 +177,15 @@ const Register = () => {
                 Confirm Password
               </label>
               <input
-                {...register('confirmPassword')}
+                {...register('password_confirm')}
                 type="password"
                 id="confirmPassword"
                 className="form-input"
                 placeholder="Confirm your password"
               />
-              {errors.confirmPassword && (
+              {errors.password_confirm && (
                 <p className="error-message">
-                  {errors.confirmPassword.message}
+                  {errors.password_confirm.message}
                 </p>
               )}
             </div>
@@ -158,18 +193,18 @@ const Register = () => {
 
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="dateOfBirth" className="form-label">
+              <label htmlFor="date_of_birth" className="form-label">
                 Date of Birth
               </label>
               <input
-                {...register('dateOfBirth')}
+                {...register('date_of_birth')}
                 type="date"
-                id="dateOfBirth"
+                id="date_of_birth"
                 className="form-input"
               />
-              {errors.dateOfBirth && (
+              {errors.date_of_birth && (
                 <p className="error-message">
-                  {errors.dateOfBirth.message}
+                  {errors.date_of_birth.message}
                 </p>
               )}
             </div>
@@ -184,10 +219,9 @@ const Register = () => {
                 className="form-input"
               >
                 <option value="">Select your gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-                <option value="prefer-not-to-say">Prefer not to say</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+                <option value="O">Other</option>
               </select>
               {errors.gender && (
                 <p className="error-message">

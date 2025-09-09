@@ -20,4 +20,4 @@ RUN chmod +x /app/start.sh
 EXPOSE 3000 5173
 
 # Start the application
-CMD ["/app/start.sh"]
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
