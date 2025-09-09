@@ -52,14 +52,7 @@ cd WithMe-Test
 
 ## 🏃‍♂️ Quick Start
 
-### 1. Clone the Project
-
-```bash
-git clone git@github.com:realmowhamad/WithMe-Test.git
-cd simple
-```
-
-### 2. Start the Project
+### 1. Start the Project
 
 Open your terminal and run the following command:
 
@@ -70,17 +63,13 @@ docker-compose up --build
 > **Note**: Make sure Docker Desktop is running (green icon in system tray)  
 > **Note**: First run may take several minutes to download and build images.
 
-### 4. Access the Application
+### 2. Access the Application
 
 - **Frontend**: http://localhost:5173
 - **Backend API**: http://localhost:8000/api/
 - **Admin Panel**: http://localhost:8000/admin/
 
-### 5. Create Admin Account
 
-```bash
-docker-compose exec backend python manage.py createsuperuser
-```
 
 Follow the prompts and log in at `/admin/`.
 
