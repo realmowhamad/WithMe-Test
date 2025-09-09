@@ -3,6 +3,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import './Login.css';
 import Navbar from '../components/Navigation';
+import useAuth from '../hooks/useAuth';
+import type { LoginDataTypes, LoginResponseTypes } from '../hooks/useAuth';
+import { useEffect, useState } from 'react';
 
 // Validation schema
 const schema = yup.object({
@@ -19,6 +22,10 @@ const schema = yup.object({
 type FormData = yup.InferType<typeof schema>;
 
 const Login = () => {
+const  {mutate: mutateLogin} = useAuth().useLogin();
+const [showMessage, setShowMessage] = useState<boolean>(false);
+const [message, setMessage] = useState<string>('');
+const [messageType, setMessageType] = useState<'success' | 'error'>('success'); 
   const {
     register,
     handleSubmit,
@@ -27,15 +34,32 @@ const Login = () => {
     resolver: yupResolver(schema),
   });
 
+  useEffect(() => {
+    if (showMessage) {
+      setTimeout(() => {
+        setShowMessage(false);
+      }, 3000);
+    }
+  }, [showMessage]);
+
   const onSubmit = async (data: FormData) => {
     try {
       // Simulate API call
       console.log('Login data:', data);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      alert('Login successful!');
+      mutateLogin(data as unknown as LoginDataTypes,{
+        onSuccess:(data:LoginResponseTypes) => {
+          setMessageType('success');
+          setMessage(data.message);
+          setShowMessage(true);
+        },
+        onError:(error:any) => {
+          setMessageType('error');
+          setMessage(error.response?.data?.message);
+          setShowMessage(true);
+        }
+      });
     } catch (error) {
       console.error('Login error:', error);
-      alert('Login failed. Please try again.');
     }
   };
 
@@ -46,7 +70,11 @@ const Login = () => {
         <h2 className="login-title">
           Login
         </h2>
-        
+          {showMessage && (
+          <div className={`message-container ${messageType}`}>
+            <p className="message-text">{message}</p>
+          </div>
+        )}
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="form-group">
             <label htmlFor="username" className="form-label">

@@ -8,8 +8,8 @@ const REFRESH_TOKEN = "refresh";
 // Determine the base URL based on the environment (production or development)
 export const BASE_URL =
   import.meta.env.MODE === "production"
-    ? import.meta.env.VITE_API_BASE_URL_PRODUCTION
-    : import.meta.env.VITE_API_BASE_URL;
+    ? import.meta.env.VITE_API_BASE_URL_PRODUCTION || "http://localhost:8000/api"
+    : import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
 
 // Create an Axios instance with default configuration
 const AxiosConfigInstance = axios.create({
@@ -17,6 +17,7 @@ const AxiosConfigInstance = axios.create({
   withCredentials: true, // Send cookies with requests
   headers: {
     accept: "application/json", // Set default accept header
+    "Content-Type": "application/json",
   },
 });
 
