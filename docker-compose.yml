@@ -34,6 +34,9 @@ services:
 
   frontend:
     build: ./frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     ports:
       - "${FRONTEND_PORT:-3000}:${FRONTEND_PORT:-3000}"
       - "${FRONTEND_DEV_PORT:-5173}:5173"
