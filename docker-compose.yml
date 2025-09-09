@@ -20,7 +20,6 @@ services:
     volumes:
       - ./backend:/app
       - static_volume:/app/staticfiles
-    command: ["/bin/bash", "-c", "cd /app && chmod +x start.sh wait-for-it.sh && ./start.sh"]
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     environment:
@@ -47,6 +46,17 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
+    command: >
+      sh -c "
+      if [ \"$$NODE_ENV\" = \"production\" ]; then
+        echo 'Building and starting production frontend...';
+        npm run build;
+        npm run preview -- --host 0.0.0.0 --port 3000;
+      else
+        echo 'Starting development frontend...';
+        npm run dev -- --host 0.0.0.0 --port 5173;
+      fi
+      "
 
 volumes:
   postgres_data:
