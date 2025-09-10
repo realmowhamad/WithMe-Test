@@ -10,6 +10,7 @@ A full-stack web application with Django backend, React frontend, and PostgreSQL
 - [Project Structure](#project-structure)
 - [API Endpoints](#api-endpoints)
 - [Useful Commands](#useful-commands)
+- [Testing](#testing)
 - [Troubleshooting](#troubleshooting)
 - [Development](#development)
 - [Resources](#resources)
@@ -131,6 +132,99 @@ simple/
 | `docker-compose logs -f` | View logs |
 | `docker-compose exec backend python manage.py migrate` | Run database migrations |
 | `docker-compose exec db psql -U postgres -d simple_db` | Access database |
+
+## 🧪 Testing
+
+This project includes comprehensive tests for both backend and frontend components. All tests can be run using Docker containers.
+
+### Backend Tests
+
+The backend includes Django tests for models and functionality:
+
+#### Available Test Files:
+- `test_profile.py` - Tests for Profile model functionality
+- `test_superuser.py` - Tests for superuser creation command
+
+#### Running Backend Tests:
+
+**Run all Django tests:**
+```bash
+docker-compose exec backend python manage.py test
+```
+
+**Run specific test file:**
+```bash
+# Test Profile model
+docker-compose exec backend python manage.py test api.tests.test_models
+
+# Test superuser creation
+docker-compose exec backend python test_superuser.py
+```
+
+**Run tests with verbose output:**
+```bash
+docker-compose exec backend python manage.py test --verbosity=2
+```
+
+### Frontend Tests
+
+The frontend uses Vitest for testing React components:
+
+#### Available Test Files:
+- `Register.test.tsx` - Tests for Register component
+
+#### Running Frontend Tests:
+
+**Run all frontend tests:**
+```bash
+docker-compose exec frontend npm test
+```
+
+**Run tests in watch mode (for development):**
+```bash
+docker-compose exec frontend npm test -- --watch
+```
+
+**Run tests with UI interface:**
+```bash
+docker-compose exec frontend npm run test:ui
+```
+
+**Run tests with coverage report:**
+```bash
+docker-compose exec frontend npm test -- --coverage
+```
+
+### Running All Tests
+
+**Run both backend and frontend tests:**
+```bash
+# Backend tests
+docker-compose exec backend python manage.py test
+
+# Frontend tests  
+docker-compose exec frontend npm test
+```
+
+### Test Commands Summary
+
+| Command | Description |
+|---------|-------------|
+| `docker-compose exec backend python manage.py test` | Run all Django tests |
+| `docker-compose exec backend python test_superuser.py` | Test superuser creation |
+| `docker-compose exec frontend npm test` | Run all frontend tests |
+| `docker-compose exec frontend npm test -- --watch` | Run tests in watch mode |
+| `docker-compose exec frontend npm run test:ui` | Open test UI interface |
+| `docker-compose exec frontend npm test -- --coverage` | Run tests with coverage |
+
+### Test Environment Notes
+
+- All tests run in isolated Docker containers
+- Backend tests use the same database as the main application
+- Frontend tests use Vitest with jsdom environment
+- Tests are automatically discovered based on naming conventions:
+  - Backend: Files named `test_*.py` or `*_test.py`
+  - Frontend: Files named `*.test.tsx` or `*.test.ts`
 
 ## 🔧 Troubleshooting
 
